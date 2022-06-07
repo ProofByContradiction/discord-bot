@@ -1,11 +1,13 @@
 mod private{
-    pub const TOKEN: &'static str = "TOKEN_HERE";
-    pub const PREFIX: &'static str = "PREFIX_HERE";
+    pub const TOKEN: &'static str = "<TOKEN_HERE>";
+    pub const PREFIX: &'static str = "<PREFIX_HERE>";
 }
 
 use std::io::Write;
 use ron::{ser::{self, PrettyConfig}, de};
 use serde::{Serialize, Deserialize};
+
+//Rewrite to pull config info from .yaml
 #[derive(Debug,Serialize,Deserialize)]
 pub struct Config {
     token: &'static str,
@@ -23,7 +25,7 @@ pub struct Config {
             .depth_limit(2)
             .separate_tuple_members(true)
             .enumerate_arrays(true);
-            
+
         let serial = ser::to_string_pretty(&self, pretty)
             .expect("Serialization failed!");
     
@@ -44,15 +46,13 @@ pub struct Config {
         let file = std::fs::File::open(&input_path)
             .expect("Failed opening file");
     
-        let config : Config = match de::from_reader(file){
-            Ok(x) => x,
+        return match de::from_reader(file){
+            Ok(x) => Ok(x),
             Err(e) => {
                 println!("Failed to load config: {}", e);
                 std::process::exit(1);
             }
         };
-    
-        return Ok(config);
     }
 
     pub fn token(&self) -> &'static str {
