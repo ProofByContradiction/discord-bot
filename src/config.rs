@@ -1,7 +1,10 @@
-pub const TOKEN: &'static str = "TOKEN_HERE";
-pub const PREFIX: &'static str = "PREFIX_HERE";
+mod private{
+    pub const TOKEN: &'static str = "TOKEN_HERE";
+    pub const PREFIX: &'static str = "PREFIX_HERE";
+}
 
-use ron::{ser, de};
+use std::io::Write;
+use ron::{ser::{self, PrettyConfig}, de};
 use serde::{Serialize, Deserialize};
 #[derive(Debug,Serialize,Deserialize)]
 pub struct Config {
@@ -17,10 +20,10 @@ pub struct Config {
 
     pub fn save(&self) -> std::io::Result<()> {   
         let pretty = PrettyConfig::new()
-            .with_depth_limit(2)
-            .with_seperate_tuple_members(true)
-            .with_enum_arrays(true);
-    
+            .depth_limit(2)
+            .separate_tuple_members(true)
+            .enumerate_arrays(true);
+            
         let serial = ser::to_string_pretty(&self, pretty)
             .expect("Serialization failed!");
     
@@ -32,7 +35,7 @@ pub struct Config {
             println!("Write operation successful");
         }
     
-        return Ok();
+        return Ok(());
     }
     
     pub fn load() -> std::io::Result<Config> {
@@ -49,7 +52,7 @@ pub struct Config {
             }
         };
     
-        return Ok(Config);
+        return Ok(config);
     }
 
     pub fn token(&self) -> &'static str {
