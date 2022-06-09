@@ -46,13 +46,15 @@ pub struct Config {
         let file = std::fs::File::open(&input_path)
             .expect("Failed opening file");
     
-        return match de::from_reader(file){
+        let config = match de::from_reader(file){
             Ok(x) => Ok(x),
             Err(e) => {
                 println!("Failed to load config: {}", e);
                 std::process::exit(1);
             }
         };
+
+        return config;
     }
 
     pub fn token(&self) -> &'static str {
